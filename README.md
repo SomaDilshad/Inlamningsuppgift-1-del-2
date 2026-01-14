@@ -1,172 +1,164 @@
-https://github.com/SomaDilshad/Inlamningsuppgift-1-del-2.git
 - Multi-Sensor System with Inheritance and Polymorphism
 - Inlämningsuppgift 2 - Fortsättning på IoT-sensorsystem
 
--  Overview
-This project extends the multi-sensor system from Assignment 1 with object-oriented design principles, specifically inheritance and polymorphism. The system now features a more modular architecture with specialized sensor classes and additional functionality for threshold monitoring.
+- Overview
+This project extends the multi-sensor system from Assignment 1 with object-oriented design principles, specifically inheritance and **polymorphism. The system now features a more modular architecture with specialized sensor classes and additional functionality for threshold monitoring.
 
 -  New Features in Version 2
 
 -  1. Inheritance Hierarchy
-- Base Class: `Sensor` (abstract)
-- Derived Classes: 
-  - `TemperatureSensor`
-  - `HumiditySensor` 
-  - `PressureSensor`
+Implemented a clear class hierarchy:
+- Abstract Base Class: `Sensor` - defines common interface with virtual methods
+- Concrete Derived Classes: 
+  - `TemperatureSensor` - specialized for temperature readings
+  - `HumiditySensor` - specialized for humidity measurements  
+  - `PressureSensor` - specialized for pressure data
 
 -  2. Polymorphic Behavior
-- Virtual method `readValue()` for sensor-specific implementations
-- Factory pattern for sensor creation
-- Runtime polymorphism through base class pointers
+- Virtual Methods: `readValue()` is overridden in each derived class
+- Factory Pattern: `createSensor()` function returns appropriate sensor type
+- Runtime Binding: Methods are called through base class pointers
 
 -  3. New Manager Class
-- `SensorManager` handles all sensor operations
-- Centralized control and data management
-- Clean separation of concerns
+- `SensorManager` centralizes all sensor operations
+- Handles sensor lifecycle and data collection
+- Provides clean API for main program
 
 -  4. Threshold Analysis (VG Feature)
-- Set upper/lower limits for sensors
-- Automatic violation detection
-- Real-time monitoring capabilities
+- Configurable upper/lower limits per sensor
+- Automatic violation counting
+- Real-time monitoring support
 
--  Updated Architecture
+-  Class Design
 
+-  Inheritance Structure
 ```
-Main Program
-    ↓
-SensorManager → MeasurementStorage
-    ↓
-[TemperatureSensor, HumiditySensor, PressureSensor]
-    ↓
-Measurement
+Sensor (Abstract Base Class)
+├── TemperatureSensor
+├── HumiditySensor
+└── PressureSensor
 ```
+
+-  Key Design Patterns
+1. Factory Pattern: For creating sensor instances
+2. Strategy Pattern: Each sensor implements its own reading logic
+3. Manager Pattern: Centralized control through SensorManager
+
+-  Key Methods
+- `Sensor::readValue()` - Pure virtual method for sensor-specific readings
+- `Sensor::createMeasurement()` - Template method using readValue()
+- `SensorManager::setThreshold()` - Configures monitoring limits
+- `SensorManager::checkThresholds()` - Analyzes data against limits
 
 -  File Structure
 ```
 project/
-├── main.cpp              - Updated main program with new menu
-├── sensor.h/cpp          - Inheritance hierarchy (UPDATED)
-├── measurement.h/cpp     - Measurement struct
-├── storage.h/cpp         - Data storage and analysis  
-├── utils.h/cpp           - Utility functions
-├── sensormanager.h/cpp   - NEW: Central management class
-└── Makefile              - Build configuration
+├── main.cpp                 - Main program with enhanced menu
+├── sensor.h/cpp             - Inheritance hierarchy implementation
+├── measurement.h/cpp        - Data structure for measurements
+├── storage.h/cpp            - Data persistence and analysis  
+├── utils.h/cpp              - Utility functions
+├── sensormanager.h/cpp      - Central management system
+└── Makefile                 - Build configuration
 ```
 
 -  Compilation & Execution
 
 ```bash
-- Compile
+-  Compile the project
 make
 
-- Run
+-  Run the program
 ./sensorsystem_v2
 
-- Or compile manually
-g++ -std=c++17 -o sensorsystem_v2 .cpp
+-  Alternative manual compilation
+g++ -std=c++17 -Wall -Wextra -o sensorsystem_v2 *.cpp
 ```
 
--  New User Interface
+-  Program Features Menu
 
 ```
 === MAIN MENU ===
-1. List all sensors (NEW - shows polymorphic types)
-2. Take new measurements
-3. Show all measurements  
-4. Show statistics
-5. File operations
-6. Clear all data
-7. Set thresholds (NEW)
-8. Check thresholds (NEW)
-0. Exit
+1. List all sensors (shows polymorphic types)
+2. Take new measurements from all sensors
+3. Display all stored measurements  
+4. Show statistical analysis
+5. File operations (save/load data)
+6. Clear all measurement data
+7. Configure threshold limits (NEW)
+8. Check for threshold violations (NEW)
+0. Exit program
 ```
 
--  Inheritance Implementation Details
+-  Testing the Implementation
 
--  Base Class: Sensor
-```cpp
-class Sensor {
-    // Common properties
-    virtual double readValue() const = 0;  // Pure virtual
-    virtual std::string getSensorInfo() const;
-};
+-  Test 1: Verify Inheritance
+1. Run program and select option 1
+2. Verify that different sensor types are listed correctly
+3. Each sensor should show its specific type information
+
+-  Test 2: Test Threshold System
+1. Set a threshold for a sensor (option 7)
+2. Take some measurements (option 2)
+3. Check for violations (option 8)
+4. Verify that violations are correctly detected
+
+-  Test 3: Verify Polymorphism
+1. Sensors are stored as base class pointers
+2. Each sensor type produces values in its specific range
+3. Factory function creates correct sensor types
+
+-  Implementation Details
+
+-  Code Organization Principles
+- Separation of Concerns: Each class has a single responsibility
+- Encapsulation: Internal details are hidden behind public interfaces
+- Dependency Injection: SensorManager works with any Sensor-derived class
+- Resource Management: Smart pointers prevent memory leaks
+
+-  File Format for Data Storage
+```
+timestamp,sensor_name,value,unit
+2024-11-20 10:30:25,TempSensor1,22.5,°C
+2024-11-20 10:30:25,HumiditySensor1,45.2,%
 ```
 
--  Derived Class Example: TemperatureSensor
-```cpp
-class TemperatureSensor : public Sensor {
-public:
-    TemperatureSensor(const std::string& name);
-    double readValue() const override;  // Polymorphic override
-    std::string getSensorInfo() const override;
-};
-```
+-  Statistical Analysis Includes
+- Mean value calculation
+- Minimum and maximum detection
+- Standard deviation computation
+- Per-sensor and system-wide statistics
 
--  Factory Pattern
-```cpp
-std::unique_ptr<Sensor> createSensor("Temperature", "TempSensor1");
-// Returns TemperatureSensor instance as Sensor pointer
-```
+-  Requirements Fulfillment
 
--  Threshold Analysis Feature
-
--  Setting Thresholds
-```cpp
-// Set upper limit for temperature
-manager.setThreshold("TempSensor1", 25.0, true);
-
-// Set lower limit for humidity  
-manager.setThreshold("HumiditySensor1", 40.0, false);
-```
-
--  Checking Violations
-```cpp
-manager.checkThresholds();
-// Output: TempSensor1: 3 violations of upper limit 25.0
-```
-
--  Testing the New Features
-
-1. Test Inheritance:
-   ```bash
-   ./sensorsystem_v2
-   Choose: 1  # Lists sensors with their specific types
-   ```
-
-2. Test Thresholds:
-   ```bash
-   Choose: 7  # Set threshold
-   Choose: 8  # Check violations
-   ```
-
-3. Test File Operations:
-   ```bash
-   Choose: 5 → Save data
-   Restart program → Choose: 5 → Load data
-   ```
-
--  Requirements Met
-
--  From Assignment 1 (Still Valid)
--  Multiple sensor types
--  Measurement storage in `std::vector<Measurement>`
--  Statistical analysis (mean, min, max, stddev)
--  File I/O with CSV format
--  Menu-based interface
-
--  New Requirements (Assignment 2)
+-  Core Requirements (All Passed)
 -  Inheritance hierarchy with base and derived classes
--  Polymorphic method calls
--  At least one new functional improvement (Threshold Analysis)
--  Better code organization with Manager class
--  Proper separation in .h/.cpp files
+-  Polymorphic method implementations
+-  At least one new functional improvement
+-  Proper code organization in .h/.cpp files
+-  Maintains all functionality from Assignment 1
 
--  Future Extensions
+-  Extended Features (VG Level)
+-  Threshold monitoring system
+-  Configurable upper/lower limits
+-  Violation detection and reporting
+-  Enhanced user interface
 
-Potential improvements for next version:
-- Multiple inheritance for complex sensors
-- Template-based measurements for different data types
-- Observer pattern for real-time notifications
-- Database integration for persistent storage
 
+-  Learning Outcomes
+
+This implementation demonstrates:
+1. Effective use of inheritance to create specialized sensor types
+2. Polymorphism for flexible method calls
+3. Design patterns for clean architecture
+4. C++ best practices for memory and resource management
+5. Extensible design that can accommodate new sensor types
+
+-  Future Enhancement Possibilities
+
+1. Additional Sensor Types: Light sensors, motion detectors, etc.
+2. Network Integration: Remote sensor data collection
+3. Real-time Alerts: Email/SMS notifications for threshold violations
+4. Data Visualization: Graphical representation of sensor data
+5. Multi-threading: Concurrent data collection from multiple sensors
 
