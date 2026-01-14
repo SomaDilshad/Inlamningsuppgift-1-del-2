@@ -1,5 +1,6 @@
 - Multi-Sensor System with Inheritance and Polymorphism
 - Inlämningsuppgift 2 - Fortsättning på IoT-sensorsystem
+- https://github.com/SomaDilshad/Inlamningsuppgift-1-del-2.git 
 
 - Overview
 This project extends the multi-sensor system from Assignment 1 with object-oriented design principles, specifically inheritance and **polymorphism. The system now features a more modular architecture with specialized sensor classes and additional functionality for threshold monitoring.
