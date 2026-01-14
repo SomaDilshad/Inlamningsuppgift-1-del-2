@@ -1,3 +1,4 @@
+assignment_2 – Multi-Sensor Monitoring System
 - Multi-Sensor System with Inheritance and Polymorphism
 - Inlämningsuppgift 2 - Fortsättning på IoT-sensorsystem
 - https://github.com/SomaDilshad/Inlamningsuppgift-1-del-2.git 
